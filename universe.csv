@@ -1,0 +1,23 @@
+ticker,name,sector,theme
+NVDA,NVIDIA,半導體,AI晶片
+AVGO,Broadcom,半導體,ASIC
+AMAT,Applied Materials,半導體,半導體設備
+LRCX,Lam Research,半導體,半導體設備
+KLAC,KLA,半導體,半導體設備
+WDC,Western Digital,半導體,存儲
+MU,Micron,半導體,存儲/DRAM
+MSFT,Microsoft,AI/科技,雲端
+ORCL,Oracle,AI/科技,雲端
+ANET,Arista Networks,AI/科技,網通
+VRT,Vertiv,AI/科技,AI電力/散熱
+ETN,Eaton,能源/核能,AI電力基礎設施
+CEG,Constellation Energy,能源/核能,核能
+VST,Vistra,能源/核能,AI電力
+APH,Amphenol,AI/科技,連接器
+TEL,TE Connectivity,AI/科技,連接器
+LMT,Lockheed Martin,國防/航太,國防
+RTX,RTX Corp,國防/航太,國防
+JPM,JPMorgan,金融,金融龍頭
+LLY,Eli Lilly,醫療/生技,GLP-1
+CRWD,CrowdStrike,資安,資安
+PANW,Palo Alto Networks,資安,資安
