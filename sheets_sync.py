@@ -5,14 +5,18 @@ sheets_sync.py — 把掃描結果寫入 Google Sheets「US_WarRoom」
 環境變數：
   GSA_JSON      : Service Account 金鑰 JSON 內容（GitHub Secret）
   US_SHEET_ID   : US_WarRoom 試算表 ID
-寫入工作表：掃描結果（覆寫）
+
+用法：
+  python sheets_sync.py                          # 預設：scan_result.csv → 掃描結果
+  python sheets_sync.py chips_proxy.csv 籌碼替代   # 指定檔案與分頁名稱
 """
 import json
 import os
+import sys
 import pandas as pd
 
 
-def sync():
+def sync(csv_file: str = "scan_result.csv", sheet_name: str = "掃描結果"):
     gsa_json = os.environ.get("GSA_JSON")
     sheet_id = os.environ.get("US_SHEET_ID")
     if not gsa_json or not sheet_id:
@@ -30,17 +34,21 @@ def sync():
     sh = gc.open_by_key(sheet_id)
 
     base = os.path.dirname(os.path.abspath(__file__))
-    df = pd.read_csv(os.path.join(base, "scan_result.csv")).fillna("")
+    df = pd.read_csv(os.path.join(base, csv_file)).fillna("")
 
     try:
-        ws = sh.worksheet("掃描結果")
+        ws = sh.worksheet(sheet_name)
         ws.clear()
     except gspread.WorksheetNotFound:
-        ws = sh.add_worksheet("掃描結果", rows=len(df) + 10, cols=len(df.columns) + 2)
+        ws = sh.add_worksheet(sheet_name, rows=len(df) + 10, cols=len(df.columns) + 2)
 
     ws.update([df.columns.tolist()] + df.astype(str).values.tolist())
-    print(f"✅ 已寫入 Sheets「掃描結果」：{len(df)} 筆")
+    print(f"✅ 已寫入 Sheets「{sheet_name}」：{len(df)} 筆")
 
 
 if __name__ == "__main__":
-    sync()
+    args = sys.argv[1:]
+    if len(args) >= 2:
+        sync(csv_file=args[0], sheet_name=args[1])
+    else:
+        sync()
