@@ -1,0 +1,42 @@
+# .github/workflows/us_screener.yml
+# US StockRadar 每日掃描 — 台灣時間 06:00（美股收盤後）
+# 注意：美股夏令時間收盤 = 台灣 04:00；冬令 = 05:00
+#       統一排 06:00 TWN = 22:00 UTC，兩季都安全
+name: US Screener Daily Scan
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'   # 22:00 UTC = 台灣時間 06:00（週二~週六，對應美股週一~五收盤）
+  workflow_dispatch:          # 保留手動觸發
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy gspread google-auth
+
+      - name: Run screener
+        run: python us_screener.py
+
+      - name: Sync to Google Sheets
+        env:
+          GSA_JSON: ${{ secrets.GSA_JSON }}
+          US_SHEET_ID: ${{ secrets.US_SHEET_ID }}
+        run: python sheets_sync.py
+
+      - name: Commit results (供 Cloudflare Pages 讀取 us-data.json)
+        run: |
+          git config user.name "us-screener-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add scan_result.csv us-data.json
+          git diff --cached --quiet || git commit -m "US scan $(date -u +%Y-%m-%d)"
+          git push
