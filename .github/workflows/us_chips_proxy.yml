@@ -3,6 +3,9 @@
 # 13F 為季度資料 + 內部人 Form 4，週更頻率足夠
 name: US Chips Proxy Weekly
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 2 * * 0'   # 02:00 UTC 週日 = 台灣時間 週日 10:00
