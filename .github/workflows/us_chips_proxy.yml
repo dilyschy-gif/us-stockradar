@@ -1,0 +1,35 @@
+# .github/workflows/us_chips_proxy.yml
+# 籌碼替代週更 — 台灣時間 週日 10:00（02:00 UTC）
+# 13F 為季度資料 + 內部人 Form 4，週更頻率足夠
+name: US Chips Proxy Weekly
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'   # 02:00 UTC 週日 = 台灣時間 週日 10:00
+  workflow_dispatch:
+
+jobs:
+  chips:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy lxml html5lib
+
+      - name: Run chips proxy
+        run: python us_chips_proxy.py
+
+      - name: Commit results
+        run: |
+          git config user.name "us-screener-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add chips_proxy.csv chips_proxy.json
+          git diff --cached --quiet || git commit -m "Chips proxy $(date -u +%Y-%m-%d)"
+          git push
