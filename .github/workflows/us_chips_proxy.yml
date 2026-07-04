@@ -24,10 +24,16 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance pandas numpy lxml html5lib
+        run: pip install yfinance pandas numpy gspread google-auth
 
       - name: Run chips proxy
         run: python us_chips_proxy.py
+
+      - name: Sync to Google Sheets
+        env:
+          GSA_JSON: ${{ secrets.GSA_JSON }}
+          US_SHEET_ID: ${{ secrets.US_SHEET_ID }}
+        run: python sheets_sync.py chips_proxy.csv 籌碼替代
 
       - name: Commit results
         run: |
