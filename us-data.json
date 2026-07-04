@@ -1,5 +1,5 @@
 {
- "updated": "2026-07-04 16:22",
+ "updated": "2026-07-04 16:26",
  "source": "US StockRadar v1.0",
  "count": 27,
  "results": [
@@ -706,8 +706,8 @@
    "status": "OK"
   },
   {
-   "ticker": "PSTG",
-   "name": "Pure Storage",
+   "ticker": "Everpure",
+   "name": "P",
    "sector": NaN,
    "theme": NaN,
    "price": NaN,
