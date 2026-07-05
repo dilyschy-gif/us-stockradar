@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US StockRadar — 美股主升段 / 籌碼掃描</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+    --buy:#3fb950; --sell:#f85149; --gold:#d29922; --blue:#58a6ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg); color:var(--text); padding:24px;
+  }
+  header{margin-bottom:20px;}
+  h1{font-size:22px; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:13px;}
+  .meta{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:13px; color:var(--muted);}
+  .meta b{color:var(--text);}
+  .filters{display:flex; gap:8px; flex-wrap:wrap; margin:16px 0;}
+  .filters button{
+    background:var(--panel); color:var(--text); border:1px solid var(--border);
+    padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;
+  }
+  .filters button.active{border-color:var(--blue); color:var(--blue);}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:14px;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; white-space:nowrap;}
+  th{color:var(--muted); font-weight:600; cursor:pointer; user-select:none;}
+  th:hover{color:var(--text);}
+  tr:hover td{background:#1c2129;}
+  .tier{padding:2px 8px; border-radius:10px; font-size:11px; display:inline-block;}
+  .tier-star{background:rgba(210,153,34,.15); color:var(--gold); border:1px solid rgba(210,153,34,.4);}
+  .tier-watch{background:rgba(88,166,255,.12); color:var(--blue); border:1px solid rgba(88,166,255,.35);}
+  .tier-pool{background:rgba(139,148,158,.12); color:var(--muted); border:1px solid var(--border);}
+  .tier-exclude{background:rgba(248,81,73,.10); color:var(--sell); border:1px solid rgba(248,81,73,.3);}
+  .buy{color:var(--buy); font-weight:600;}
+  .sell{color:var(--sell); font-weight:600;}
+  .score{font-weight:700;}
+  .detail{color:var(--muted); font-size:12px; max-width:260px; white-space:normal;}
+  .ticker{font-weight:700;}
+  .name{color:var(--muted); font-size:12px;}
+  a{color:var(--blue); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .loading, .err{color:var(--muted); padding:20px; text-align:center;}
+  .err{color:var(--sell);}
+  footer{color:var(--muted); font-size:12px; margin-top:24px; text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>US StockRadar — 美股主升段 / 逆勢抗跌掃描</h1>
+  <div class="sub">資料來源：Google Sheet 匯出 → GitHub Actions 轉 JSON → Cloudflare Pages 發佈</div>
+  <div class="meta" id="meta"></div>
+</header>
+
+<div class="filters" id="filters"></div>
+
+<div class="card">
+  <div id="tableWrap" class="loading">資料載入中…</div>
+</div>
+
+<footer id="footer"></footer>
+
+<script>
+const TIER_CLASS = {
+  '★重點觀察(右腳+SHA多)': 'tier-star',
+  '觀察層-右腳成形中': 'tier-watch',
+  '觀察層': 'tier-watch',
+  '母池追蹤': 'tier-pool',
+};
+function tierClass(t){
+  if(!t) return 'tier-pool';
+  if(t.startsWith('排除')) return 'tier-exclude';
+  return TIER_CLASS[t] || 'tier-pool';
+}
+
+let allRows = [];
+let chipsMap = {};
+let sortKey = 'compositeScore';
+let sortDir = -1;
+let activeTier = 'all';
+
+async function load(){
+  try{
+    const [dataRes, chipsRes] = await Promise.allSettled([
+      fetch('./us-data.json').then(r=>r.json()),
+      fetch('./chips_proxy.json').then(r=>r.json())
+    ]);
+
+    if(dataRes.status !== 'fulfilled'){
+      throw new Error('us-data.json 讀取失敗');
+    }
+    const data = dataRes.value;
+    allRows = data.results || [];
+
+    if(chipsRes.status === 'fulfilled'){
+      (chipsRes.value.results || []).forEach(c=>{ chipsMap[c.ticker] = c; });
+    }
+
+    document.getElementById('meta').innerHTML =
+      `<span><b>更新時間：</b>${data.updated || '—'}</span>` +
+      `<span><b>掃描標的數：</b>${data.count ?? allRows.length}</span>` +
+      `<span><b>來源：</b>${data.source || 'US StockRadar'}</span>`;
+
+    buildFilters();
+    render();
+  }catch(e){
+    document.getElementById('tableWrap').innerHTML =
+      `<div class="err">資料載入失敗：${e.message}<br>請確認 us-data.json 與本頁面在同一個 Cloudflare Pages 部署目錄下。</div>`;
+  }
+}
+
+function buildFilters(){
+  const tiers = ['all', ...new Set(allRows.map(r=>r.tier).filter(Boolean))];
+  const wrap = document.getElementById('filters');
+  wrap.innerHTML = '';
+  tiers.forEach(t=>{
+    const btn = document.createElement('button');
+    btn.textContent = t === 'all' ? `全部 (${allRows.length})` : `${t} (${allRows.filter(r=>r.tier===t).length})`;
+    btn.className = t === activeTier ? 'active' : '';
+    btn.onclick = ()=>{ activeTier = t; buildFilters(); render(); };
+    wrap.appendChild(btn);
+  });
+}
+
+function fmtNum(n){
+  if(n === null || n === undefined || Number.isNaN(n)) return '—';
+  return typeof n === 'number' ? n.toLocaleString(undefined,{maximumFractionDigits:2}) : n;
+}
+
+function render(){
+  let rows = activeTier === 'all' ? allRows.slice() : allRows.filter(r=>r.tier===activeTier);
+  rows.sort((a,b)=>{
+    const av = a[sortKey], bv = b[sortKey];
+    if(av === bv) return 0;
+    if(av === null || av === undefined || Number.isNaN(av)) return 1;
+    if(bv === null || bv === undefined || Number.isNaN(bv)) return -1;
+    return av > bv ? sortDir : -sortDir;
+  });
+
+  const cols = [
+    {k:'ticker', label:'代號'},
+    {k:'sha_signal', label:'SHA'},
+    {k:'tier', label:'分層'},
+    {k:'n_stage', label:'N理論階段'},
+    {k:'price', label:'股價'},
+    {k:'dist_to_C_pct', label:'距C點%'},
+    {k:'compositeScore', label:'總分'},
+    {k:'techScore', label:'Tech'},
+    {k:'fundScore', label:'Fund'},
+    {k:'chipsScore', label:'Chips'},
+    {k:'volScore', label:'Vol'},
+    {k:'chips', label:'機構動向(週更)'},
+  ];
+
+  let html = '<table><thead><tr>';
+  cols.forEach(c=>{
+    const arrow = sortKey===c.k ? (sortDir===1?' ▲':' ▼') : '';
+    html += `<th onclick="setSort('${c.k}')">${c.label}${arrow}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(r=>{
+    const chip = chipsMap[r.ticker];
+    html += '<tr>';
+    html += `<td><div class="ticker">${r.ticker}</div><div class="name">${r.name||''}</div></td>`;
+    html += `<td class="${r.sha_signal==='BUY'?'buy':(r.sha_signal==='SELL'?'sell':'')}">${r.sha_signal||'—'}</td>`;
+    html += `<td><span class="tier ${tierClass(r.tier)}">${r.tier||'—'}</span></td>`;
+    html += `<td>${r.n_stage||'—'}<div class="detail">${r.techDetail||''}</div></td>`;
+    html += `<td>${fmtNum(r.price)}</td>`;
+    html += `<td>${fmtNum(r.dist_to_C_pct)}</td>`;
+    html += `<td class="score">${fmtNum(r.compositeScore)}</td>`;
+    html += `<td>${fmtNum(r.techScore)}</td>`;
+    html += `<td>${fmtNum(r.fundScore)}<div class="detail">${r.fundDetail||''}</div></td>`;
+    html += `<td>${fmtNum(r.chipsScore)}<div class="detail">${r.chipsDetail||''}</div></td>`;
+    html += `<td>${fmtNum(r.volScore)}<div class="detail">${r.volDetail||''}</div></td>`;
+    if(chip){
+      html += `<td class="detail">${chip.instTrendDetail||''} `+
+              `<a href="${chip.openinsider_link}" target="_blank" rel="noopener">OpenInsider</a> · `+
+              `<a href="${chip.sec_edgar_link}" target="_blank" rel="noopener">SEC</a></td>`;
+    } else {
+      html += `<td class="detail">—</td>`;
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+
+  document.getElementById('tableWrap').innerHTML = rows.length ? html : '<div class="loading">此分層目前沒有標的</div>';
+  document.getElementById('footer').textContent =
+    `N 理論偵測為演算法近似，程式為初篩結果，非投資建議；重要標的仍應人工確認。`;
+}
+
+function setSort(key){
+  if(sortKey === key){ sortDir *= -1; } else { sortKey = key; sortDir = -1; }
+  render();
+}
+
+load();
+</script>
+</body>
+</html>
