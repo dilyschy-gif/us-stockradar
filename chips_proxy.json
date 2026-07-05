@@ -1,5 +1,5 @@
 {
- "updated": "2026-07-04 16:13",
+ "updated": "2026-07-05 18:30",
  "source": "us_chips_proxy v1.1(內部人改連結制)",
  "results": [
   {
@@ -93,15 +93,6 @@
    "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=VRT&type=4&dateb=&owner=include&count=40"
   },
   {
-   "ticker": "CEG",
-   "name": "Constellation Energy",
-   "instTrendScore": 8,
-   "instTrendDetail": "頂級機構 8/10 家增持(佈局趨勢)",
-   "chipsProxyScore": 8,
-   "openinsider_link": "http://openinsider.com/screener?s=CEG&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
-   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CEG&type=4&dateb=&owner=include&count=40"
-  },
-  {
    "ticker": "VST",
    "name": "Vistra",
    "instTrendScore": 8,
@@ -111,13 +102,31 @@
    "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=VST&type=4&dateb=&owner=include&count=40"
   },
   {
-   "ticker": "TEL",
-   "name": "TE Connectivity",
+   "ticker": "CEG",
+   "name": "Constellation Energy",
    "instTrendScore": 8,
-   "instTrendDetail": "頂級機構 6/10 家增持(佈局趨勢)",
+   "instTrendDetail": "頂級機構 8/10 家增持(佈局趨勢)",
    "chipsProxyScore": 8,
-   "openinsider_link": "http://openinsider.com/screener?s=TEL&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
-   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TEL&type=4&dateb=&owner=include&count=40"
+   "openinsider_link": "http://openinsider.com/screener?s=CEG&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CEG&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "GLW",
+   "name": "Corning",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 7/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=GLW&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=GLW&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "PANW",
+   "name": "Palo Alto Networks",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 9/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=PANW&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=PANW&type=4&dateb=&owner=include&count=40"
   },
   {
    "ticker": "APH",
@@ -129,22 +138,13 @@
    "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=APH&type=4&dateb=&owner=include&count=40"
   },
   {
-   "ticker": "LLY",
-   "name": "Eli Lilly",
-   "instTrendScore": 8,
-   "instTrendDetail": "頂級機構 7/10 家增持(佈局趨勢)",
-   "chipsProxyScore": 8,
-   "openinsider_link": "http://openinsider.com/screener?s=LLY&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
-   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=LLY&type=4&dateb=&owner=include&count=40"
-  },
-  {
-   "ticker": "CRWD",
-   "name": "CrowdStrike",
+   "ticker": "TEL",
+   "name": "TE Connectivity",
    "instTrendScore": 8,
    "instTrendDetail": "頂級機構 6/10 家增持(佈局趨勢)",
    "chipsProxyScore": 8,
-   "openinsider_link": "http://openinsider.com/screener?s=CRWD&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
-   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CRWD&type=4&dateb=&owner=include&count=40"
+   "openinsider_link": "http://openinsider.com/screener?s=TEL&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TEL&type=4&dateb=&owner=include&count=40"
   },
   {
    "ticker": "LMT",
@@ -165,13 +165,67 @@
    "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=RTX&type=4&dateb=&owner=include&count=40"
   },
   {
-   "ticker": "PANW",
-   "name": "Palo Alto Networks",
+   "ticker": "LLY",
+   "name": "Eli Lilly",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 7/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=LLY&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=LLY&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "CRWD",
+   "name": "CrowdStrike",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 6/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=CRWD&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CRWD&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "BE",
+   "name": "Bloom Energy Corporation",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 7/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=BE&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=BE&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "HPE",
+   "name": "Hewlett Packard Enterprise",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 8/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=HPE&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=HPE&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "COHR",
+   "name": "Coherent Corp",
    "instTrendScore": 8,
    "instTrendDetail": "頂級機構 9/10 家增持(佈局趨勢)",
    "chipsProxyScore": 8,
-   "openinsider_link": "http://openinsider.com/screener?s=PANW&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
-   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=PANW&type=4&dateb=&owner=include&count=40"
+   "openinsider_link": "http://openinsider.com/screener?s=COHR&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=COHR&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "CSCO",
+   "name": "Cisco Systems",
+   "instTrendScore": 8,
+   "instTrendDetail": "頂級機構 7/10 家增持(佈局趨勢)",
+   "chipsProxyScore": 8,
+   "openinsider_link": "http://openinsider.com/screener?s=CSCO&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CSCO&type=4&dateb=&owner=include&count=40"
+  },
+  {
+   "ticker": "P",
+   "name": "Everpure",
+   "instTrendScore": 5,
+   "instTrendDetail": "增持 5 vs 減持 3(偏多)",
+   "chipsProxyScore": 5,
+   "openinsider_link": "http://openinsider.com/screener?s=P&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
+   "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=P&type=4&dateb=&owner=include&count=40"
   },
   {
    "ticker": "ANET",
