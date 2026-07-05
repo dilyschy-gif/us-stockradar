@@ -86,9 +86,13 @@ let activeTier = 'all';
 
 async function load(){
   try{
+    // 注意：後端 Python 產生的 JSON 有時會包含不合法的裸字 NaN
+    // (例如 "dist_to_C_pct": NaN)，JS 的 JSON.parse 會直接拋錯，
+    // 所以這裡改用 text() + 字串取代 NaN -> null 再解析，較為寬容。
+    const safeJson = (r) => r.text().then(t => JSON.parse(t.replace(/:\s*NaN/g, ': null')));
     const [dataRes, chipsRes] = await Promise.allSettled([
-      fetch('./us-data.json').then(r=>r.json()),
-      fetch('./chips_proxy.json').then(r=>r.json())
+      fetch('./us-data.json').then(safeJson),
+      fetch('./chips_proxy.json').then(safeJson)
     ]);
 
     if(dataRes.status !== 'fulfilled'){
