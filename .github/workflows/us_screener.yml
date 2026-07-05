@@ -4,6 +4,9 @@
 #       統一排 06:00 TWN = 22:00 UTC，兩季都安全
 name: US Screener Daily Scan
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 22 * * 1-5'   # 22:00 UTC = 台灣時間 06:00（週二~週六，對應美股週一~五收盤）
