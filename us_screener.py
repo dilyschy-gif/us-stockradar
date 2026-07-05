@@ -26,7 +26,7 @@ CFG = {
     "UNIVERSE_FILE": "universe.csv",
     "OUTPUT_CSV": "scan_result.csv",
     "OUTPUT_JSON": "us-data.json",
-    "LOOKBACK_DAYS": 250,          # 抓一年日線
+    "LOOKBACK_PERIOD": "1y",       # 抓一年日線（v1.1修正：yfinance的"250d"是日曆日≈170根K，改用"1y"）
 
     # --- SHA (Smoothed Heiken Ashi) ---
     "SHA_LEN1": 10,                # 第一次 EMA 平滑
@@ -43,6 +43,12 @@ CFG = {
     "N_C_RETRACE_MIN": 0.30,       # C 回檔至少 30%（太淺不算回檔）
     "N_C_RETRACE_MAX": 0.80,       # C 回檔不超過 80%（太深結構破壞）
     "N_NEAR_C_PCT": 8,             # 現價距 C 點 8% 內 = 「右腳即將形成」區
+    "N_B_DOMINANCE_BARS": 90,      # v1.1：B候選若在此範圍內存在更高的前swing高點→跳過
+                                   # （防止C後的反彈小高點遮蔽真正的主結構B）
+
+    # --- 新鮮突破豁免（#5，預設關閉，由指揮官決定是否啟用） ---
+    "TRACK_FRESH_BREAKOUT": False, # True=剛突破B且漲幅未超過B之上FRESH_BREAKOUT_MAX_PCT者
+    "FRESH_BREAKOUT_MAX_PCT": 5,   #      不套用波段新高排除，改列「突破確認」層
 
     # --- 排除條件（波段新高 = 中後段，不符主升段起漲目標） ---
     "EXCLUDE_NEW_HIGH_DAYS": 60,   # 60日新高視為已突破
@@ -143,6 +149,18 @@ def n_theory_status(df: pd.DataFrame) -> dict:
     # 找最近一組：A 低點 → 之後的 B 高點 → 之後的 C 低點(可為進行中)
     for bi in range(len(highs) - 1, -1, -1):
         b_idx, b_px = highs[bi]
+
+        # v1.1修正(#3)：B支配性檢查——若候選B之前N_B_DOMINANCE_BARS根K內
+        # 存在更高的swing高點，代表這只是回檔後的反彈小高，跳過，
+        # 讓迴圈往前找到真正的主結構B（否則主結構會被反彈波遮蔽）
+        dominated = any(
+            (b_idx - h_idx) <= CFG["N_B_DOMINANCE_BARS"] and h_px > b_px
+            for h_idx, h_px in highs
+            if h_idx < b_idx
+        )
+        if dominated:
+            continue
+
         # B 之前最近的低點 = A
         prior_lows = [x for x in lows if x[0] < b_idx]
         if not prior_lows:
@@ -152,15 +170,13 @@ def n_theory_status(df: pd.DataFrame) -> dict:
         if leg_pct < CFG["N_MIN_LEG_PCT"]:
             continue
 
-        # B 之後的低點 = C（若無 swing low，用 B 之後的最低價當進行中 C）
-        after_lows = [x for x in lows if x[0] > b_idx]
-        if after_lows:
-            c_idx, c_px = after_lows[-1]
-        else:
-            seg = df["Low"].iloc[b_idx + 1 :]
-            if seg.empty:
-                continue
-            c_px = float(seg.min())
+        # v1.1修正(#4)：C = B之後「所有K棒的最低價」（含最近5天未確認區段）
+        # 原版取最後一個swing低點，會漏掉近期急跌，導致dist_to_C與retrace失真、
+        # 甚至價格已破位仍亮「右腳即將形成★」
+        seg = df["Low"].iloc[b_idx + 1 :]
+        if seg.empty:
+            continue
+        c_px = float(seg.min())
 
         retrace = (b_px - c_px) / (b_px - a_px) if b_px > a_px else 1.0
         res.update({"A": round(a_px, 2), "B": round(b_px, 2), "C": round(c_px, 2)})
@@ -296,7 +312,17 @@ def analyze_one(ticker: str, name: str, sector: str, theme: str,
     composite = t_s + f_s + c_s + v_s
 
     # 分層判定
-    if new_high:
+    # v1.1(#5)：新鮮突破豁免——剛突破B且距B不超過FRESH_BREAKOUT_MAX_PCT，
+    # 結構健康者不套用波段新高排除（預設關閉，CFG開關控制）
+    fresh_breakout = (
+        CFG["TRACK_FRESH_BREAKOUT"]
+        and nres["n_stage"] == "已突破B-右腳進行中"
+        and nres["B"] is not None
+        and price <= nres["B"] * (1 + CFG["FRESH_BREAKOUT_MAX_PCT"] / 100)
+    )
+    if fresh_breakout:
+        tier = "突破確認-右腳進行中"
+    elif new_high:
         tier = "排除-波段新高(中後段)"
     elif "失效" in nres["n_stage"] or "空頭" in nres["n_stage"]:
         tier = "排除-空頭結構"
@@ -346,7 +372,7 @@ def run_scan(demo: bool = False) -> pd.DataFrame:
         for _, r in universe.iterrows():
             try:
                 tk = yf.Ticker(r["ticker"])
-                df = tk.history(period=f'{CFG["LOOKBACK_DAYS"]}d', auto_adjust=True)
+                df = tk.history(period=CFG["LOOKBACK_PERIOD"], auto_adjust=True)
                 info = {}
                 try:
                     info = tk.info or {}
@@ -359,16 +385,19 @@ def run_scan(demo: bool = False) -> pd.DataFrame:
 
     out = pd.DataFrame(rows)
     if "compositeScore" in out.columns:
-        tier_rank = {"★重點觀察(右腳+SHA多)": 0, "觀察層-右腳成形中": 1,
-                     "觀察層": 2, "母池追蹤": 3}
+        tier_rank = {"★重點觀察(右腳+SHA多)": 0, "突破確認-右腳進行中": 1,
+                     "觀察層-右腳成形中": 2, "觀察層": 3, "母池追蹤": 4}
         out["_tr"] = out["tier"].map(lambda t: tier_rank.get(t, 9))  # 排除類=9墊底
         out = out.sort_values(["_tr", "compositeScore"],
                               ascending=[True, False]).drop(columns="_tr")
 
     ts = datetime.now(TWN_TZ).strftime("%Y-%m-%d %H:%M")
     out.to_csv(os.path.join(base, CFG["OUTPUT_CSV"]), index=False, encoding="utf-8-sig")
-    payload = {"updated": ts, "source": "US StockRadar v1.0",
-               "count": len(out), "results": out.to_dict(orient="records")}
+    # v1.1(#1)：NaN→None，否則json.dump會寫出非法的NaN字面值，
+    # 瀏覽器/Node的JSON.parse與GAS等下游消費端會直接解析失敗
+    out_json = out.astype(object).where(pd.notna(out), None)
+    payload = {"updated": ts, "source": "US StockRadar v1.1",
+               "count": len(out), "results": out_json.to_dict(orient="records")}
     with open(os.path.join(base, CFG["OUTPUT_JSON"]), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1, default=str)
     return out
@@ -378,10 +407,11 @@ def run_scan(demo: bool = False) -> pd.DataFrame:
 # Demo 合成資料（沙盒/無網路時驗證指標邏輯用）
 # ============================================================
 def make_demo_data(ticker: str):
-    rng = np.random.default_rng(abs(hash(ticker)) % (2**32))
-    n = 250
-    idx = pd.bdate_range(end=datetime.now(), periods=n)
-    scenario = abs(hash(ticker)) % 3
+    seed = sum(ord(c) for c in ticker)   # v1.1：hash()有隨機化不可重現，改穩定seed(對齊chips)
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range(end=datetime.now(), periods=250)
+    n = len(idx)   # v1.1(#2)：end落在週末時pandas會回傳249個索引，以實際長度為準
+    scenario = seed % 3
 
     base = 100.0
     px = [base]
