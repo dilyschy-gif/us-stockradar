@@ -53,12 +53,36 @@ TWN_TZ = timezone(timedelta(hours=8))
 # ============================================================
 # 1) 機構持股趨勢（13F 彙整）
 # ============================================================
+# v1.2(#7)：被動型巨頭名單——這些機構的持股隨指數資金流機械性增加，
+# pctChange幾乎恆正，混入評分會讓大型股「人人有獎」（實測28檔有24檔滿分）。
+# 剔除後只看主動型機構(Fidelity/T.Rowe/Wellington/Capital Group等)的增減持
+PASSIVE_KEYWORDS = (
+    "VANGUARD", "BLACKROCK", "ISHARES", "STATE STREET", "GEODE",
+    "NORTHERN TRUST", "BANK OF NEW YORK", "CHARLES SCHWAB",
+    "NORGES BANK", "INDEX", "ETF",
+)
+
+
+def _filter_active(holders: pd.DataFrame) -> pd.DataFrame:
+    name_col = next((c for c in ["Holder", "holder", "organization"]
+                     if c in holders.columns), None)
+    if name_col is None:
+        return holders  # 找不到名稱欄位就不過濾，退回原行為
+    mask = ~holders[name_col].astype(str).str.upper().str.contains(
+        "|".join(PASSIVE_KEYWORDS), regex=True, na=False)
+    return holders[mask]
+
+
 def score_inst_trend(holders: pd.DataFrame) -> tuple:
     """輸入 yfinance institutional_holders DataFrame。
-    判讀：頂級機構(前10大)中，增持家數 vs 減持家數。
-    連續增持趨勢 = 大資金系統性佈局（中長期背景驗證，非即時訊號）。"""
+    v1.2：先剔除被動型指數巨頭，只判讀「主動型機構」的增持vs減持家數。
+    主動機構的加減碼才是有資訊含量的選擇（中長期背景驗證，非即時訊號）。"""
     if holders is None or holders.empty:
         return 0, "無13F資料"
+
+    holders = _filter_active(holders)
+    if len(holders) < 3:
+        return 3, f"主動型機構樣本不足({len(holders)}家)-中性"
 
     # yfinance 欄位名稱在不同版本間有差異，做容錯
     pct_col = None
@@ -78,12 +102,12 @@ def score_inst_trend(holders: pd.DataFrame) -> tuple:
     total = len(chg)
 
     if inc >= total * 0.6:
-        return 8, f"頂級機構 {inc}/{total} 家增持(佈局趨勢)"
+        return 8, f"主動機構 {inc}/{total} 家增持(佈局趨勢)"
     if inc > dec:
-        return 5, f"增持 {inc} vs 減持 {dec}(偏多)"
+        return 5, f"主動機構增持 {inc} vs 減持 {dec}(偏多)"
     if dec >= total * 0.6:
-        return 0, f"⚠頂級機構 {dec}/{total} 家減持"
-    return 3, f"增持 {inc} vs 減持 {dec}(中性)"
+        return 0, f"⚠主動機構 {dec}/{total} 家減持"
+    return 3, f"主動機構增持 {inc} vs 減持 {dec}(中性)"
 
 
 def fetch_inst_trend(ticker: str) -> tuple:
