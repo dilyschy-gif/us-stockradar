@@ -149,7 +149,14 @@ def build_insider_links(ticker: str) -> dict:
 # ============================================================
 def run(demo: bool = False) -> pd.DataFrame:
     base = os.path.dirname(os.path.abspath(__file__))
-    universe = pd.read_csv(os.path.join(base, CFG["UNIVERSE_FILE"]), dtype=str).fillna("")
+    # v1.2：寬容版母池讀取——新增股票只需填代號(對齊us_screener)
+    universe = pd.read_csv(os.path.join(base, CFG["UNIVERSE_FILE"]), dtype=str)
+    for col in ["ticker", "name", "sector", "theme"]:
+        if col not in universe.columns:
+            universe[col] = ""
+    universe = universe.fillna("")
+    universe["ticker"] = universe["ticker"].str.strip().str.upper()
+    universe = universe[universe["ticker"] != ""].drop_duplicates(subset="ticker", keep="first")
 
     rows = []
     for _, r in universe.iterrows():
@@ -161,7 +168,7 @@ def run(demo: bool = False) -> pd.DataFrame:
             time.sleep(CFG["SLEEP_SEC"])
         links = build_insider_links(tk)
         rows.append({
-            "ticker": tk, "name": r["name"],
+            "ticker": tk, "name": r["name"] or tk,
             "instTrendScore": i_s, "instTrendDetail": i_d,
             "chipsProxyScore": i_s,   # 內部人改連結制，不計入自動分數
             "openinsider_link": links["openinsider_link"],
