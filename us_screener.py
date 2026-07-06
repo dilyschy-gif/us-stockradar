@@ -357,16 +357,32 @@ def analyze_one(ticker: str, name: str, sector: str, theme: str,
     }
 
 
+def load_universe(path: str) -> pd.DataFrame:
+    """v1.2：寬容版母池讀取——在GitHub上新增股票時只需填代號即可。
+    - 缺少的欄位(name/sector/theme)自動補空字串
+    - 代號自動去空白、轉大寫；空白列與重複代號自動剔除
+    - name留空時，實盤模式會用yfinance的shortName自動補"""
+    u = pd.read_csv(path, dtype=str)
+    for col in ["ticker", "name", "sector", "theme"]:
+        if col not in u.columns:
+            u[col] = ""
+    u = u.fillna("")
+    u["ticker"] = u["ticker"].str.strip().str.upper()
+    u = u[u["ticker"] != ""].drop_duplicates(subset="ticker", keep="first")
+    return u.reset_index(drop=True)
+
+
 def run_scan(demo: bool = False) -> pd.DataFrame:
     base = os.path.dirname(os.path.abspath(__file__))
     upath = os.path.join(base, CFG["UNIVERSE_FILE"])
-    universe = pd.read_csv(upath, dtype=str).fillna("")
+    universe = load_universe(upath)
 
     rows = []
     if demo:
         for _, r in universe.iterrows():
             df, info = make_demo_data(r["ticker"])
-            rows.append(analyze_one(r["ticker"], r["name"], r["sector"], r["theme"], df, info))
+            name = r["name"] or r["ticker"]
+            rows.append(analyze_one(r["ticker"], name, r["sector"], r["theme"], df, info))
     else:
         import yfinance as yf
         for _, r in universe.iterrows():
@@ -378,9 +394,11 @@ def run_scan(demo: bool = False) -> pd.DataFrame:
                     info = tk.info or {}
                 except Exception:
                     pass
-                rows.append(analyze_one(r["ticker"], r["name"], r["sector"], r["theme"], df, info))
+                # v1.2：name留空→自動用yfinance的公司名補上
+                name = r["name"] or info.get("shortName") or info.get("longName") or r["ticker"]
+                rows.append(analyze_one(r["ticker"], name, r["sector"], r["theme"], df, info))
             except Exception as e:
-                rows.append({"ticker": r["ticker"], "name": r["name"],
+                rows.append({"ticker": r["ticker"], "name": r["name"] or r["ticker"],
                              "status": f"錯誤:{e}"})
 
     out = pd.DataFrame(rows)
