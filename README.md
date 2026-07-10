@@ -1,68 +1,81 @@
-# US StockRadar v1.0 — 部署說明
+# US StockRadar — 美股市場熱度雷達
 
-依 CLAUDE-US.md 六階段漏斗實作的美股選股程式。
+美股選股引擎加上市場熱度儀表板。系統把「進場準備度」與「新聞熱度」分開，
+避免只因股票很熱門就把它當成買進候選。
 
-## 檔案清單
+## 線上頁面
 
-| 檔案 | 用途 |
-|------|------|
-| `us_screener.py` | 主程式：SHA 訊號 + N 理論右腳偵測 + BB 收斂 + 四面向評分 |
-| `universe.csv` | 母池（22 支範例，七大板塊 × 主題標籤，可自行增刪） |
-| `sheets_sync.py` | 掃描結果寫入 Google Sheets「US_WarRoom」 |
-| `us_screener.yml` | GitHub Actions 排程（放到 `.github/workflows/`） |
+- 美股雷達：<https://dilyschy-gif.github.io/us-stockradar/>
+- 台股雷達：<https://dilyschy-gif.github.io/market-radar/>
 
-## 部署步驟（一次一步）
+兩個網站保留獨立資料管線，頁首可互相切換，不會因其中一個市場的排程失敗而拖累另一個。
 
-### 第一步：本機測試（今天做這步就好）
-```bash
-pip install yfinance pandas numpy
-python us_screener.py          # 真實資料掃描
-python us_screener.py --demo   # 合成資料驗證邏輯
-```
-輸出：`scan_result.csv`（Excel 可開）+ `us-data.json`（給網頁用）
+## 資料流程
 
-### 第二步：GitHub 上架
-1. 建新 repo（或用現有 twstock repo 開新資料夾）
-2. 上傳 4 個檔案，`us_screener.yml` 放到 `.github/workflows/`
-3. 手動觸發一次（Actions → Run workflow）驗證
+| 模組 | 用途 | 更新頻率 |
+| --- | --- | --- |
+| us_screener.py | SHA、N字右腳、BB收斂、基本面、籌碼替代、量能 | 美股收盤後每日 |
+| us_chips_proxy.py | 主動型機構13F背景與Form 4人工複核連結 | 每週 |
+| us_market_radar.py | Google News聲量、題材辨識、熱度×進場結構判讀、靜態網站 | 美股收盤後每日 |
+| sheets_sync.py | 將掃描結果同步到Google Sheets | 美股收盤後每日 |
 
-### 第三步：Sheets 同步（選配）
-1. 建立 Google Sheet「US_WarRoom」，複製試算表 ID
-2. GCP Service Account 金鑰 JSON → GitHub Secrets 設 `GSA_JSON`
-3. Secrets 設 `US_SHEET_ID`
-4. 把 Service Account email 加入 Sheet 編輯者
+每日流程輸出：
 
-### 第四步：觀察一週再說
-讓系統跑 5 個交易日，核對訊號合理性後，才考慮接 BB-8 早盤報告或 Cloudflare Pages。
+- scan_result.csv
+- us-data.json
+- site/index.html
+- site/data/latest.json
+- site/data/history/YYYY-MM-DD.json
 
-## 評分架構（總分 100）
+## 雷達判讀
 
-| 面向 | 權重 | 內容 |
-|------|------|------|
-| techScore | 40 | SHA=BUY(12) + N理論右腳★(16) + BB收斂(8) + 站上MA20(4) |
-| fundScore | 30 | 營收YoY>15%(12) + EPS成長>10%(12) + 毛利率>30%(6) |
-| chipsScore | 15 | 空單佔比低(7) + 機構持股>60%(8) ※13F/內部人待週更模組 |
-| volScore | 15 | 日均額>$20M(8) + 回檔量縮沉澱(7) |
+entry_score沿用選股引擎的compositeScore：
 
-## 分層邏輯（tier）
+| 面向 | 權重 |
+| --- | ---: |
+| 技術面 | 40 |
+| 基本面 | 30 |
+| 籌碼替代 | 15 |
+| 量能 | 15 |
 
-- `★重點觀察(右腳+SHA多)`：N理論右腳即將形成 + SHA=BUY → 最優先
-- `觀察層-右腳成形中`：右腳區但 SHA 未翻多
-- `觀察層`：綜合分 ≥60
-- `排除-波段新高(中後段)`：60日新高 = 已大漲，不符主升段起漲目標
-- `排除-空頭結構`：跌破 A 點，N 結構失效（PYPL 教訓）
-- `排除-量能不足`：日均成交額 < $20M（量能鐵律美股版）
+buzz_score則依近24小時新聞提及、時效與來源多樣性標準化為0–100。
 
-## 參數調整
+| 熱度 | 進場條件 | 判讀 |
+| --- | --- | --- |
+| 高 | 非排除層且進場分≥60 | 熱度＋結構共振，優先研究 |
+| 低 | 非排除層且進場分≥60 | 低熱早期候選 |
+| 高 | 技術排除或波段新高 | 避免追價 |
+| 低 | 進場分不足 | 持續追蹤 |
 
-全部集中在 `us_screener.py` 開頭的 `CFG`，與 StockRadar Pro 同風格。
-常調項目：`N_MIN_LEG_PCT`（左腳最小漲幅）、`N_NEAR_C_PCT`（右腳區寬度）、
-`MIN_AVG_DOLLAR_VOL`（量能門檻）、`BB_SQUEEZE_PCT`（收斂判定）。
+## 本機執行
 
-## 已知限制
+    python -m pip install -r requirements.txt
+    python -m unittest discover -s tests -v
+    python us_screener.py
+    python us_market_radar.py
 
-1. **籌碼替代不完整**：目前僅空單佔比 + 機構持股比（yfinance 即時可得）；
-   13F 趨勢與內部人 Form 4 需另建週更模組（SEC EDGAR / OpenInsider）。
-2. **分析師修正**：yfinance 免費資料無預估修正歷史，Stage 2 此項暫缺。
-3. **N 理論偵測是演算法近似**：swing 偵測參數化，重要標的仍應人工看圖確認
-   ——程式是初篩，不是決策。
+離線測試儀表板，不抓新聞：
+
+    python us_market_radar.py --no-news
+
+## 自動更新
+
+.github/workflows/us_screener.yml會在台灣時間06:00執行：
+
+1. 跑單元測試。
+2. 更新美股選股資料。
+3. 選配同步Google Sheets。
+4. 抓取新聞並產生美股市場熱度雷達。
+5. 保存每日快照。
+6. 發布到gh-pages。
+
+第一次合併後，如GitHub Pages尚未啟用，請在Repository的
+Settings → Pages將來源設為Deploy from a branch，分支選gh-pages / root。
+
+## 資料限制
+
+- 新聞熱度來自Google News公開RSS，不等於Reddit或Stocktwits社群貼文數。
+- yfinance、13F與機構持股資料不是交易所即時法人流向。
+- 13F具申報時差，僅作背景驗證。
+- N字偵測為演算法近似，重要標的仍需人工看圖。
+- 本工具是研究清單產生器，不構成投資建議。
