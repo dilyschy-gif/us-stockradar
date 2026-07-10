@@ -8,9 +8,23 @@ permissions:
   contents: write
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "us_market_radar.py"
+      - "us_screener.py"
+      - "us_chips_proxy.py"
+      - "universe.csv"
+      - "requirements.txt"
+      - "tests/**"
+      - ".github/workflows/us_screener.yml"
   schedule:
     - cron: '0 22 * * 1-5'   # 22:00 UTC = 台灣時間 06:00（週二~週六，對應美股週一~五收盤）
   workflow_dispatch:          # 保留手動觸發
+
+concurrency:
+  group: us-stockradar-writes
+  cancel-in-progress: false
 
 jobs:
   scan:
@@ -25,7 +39,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance pandas numpy gspread google-auth
+        run: python -m pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
 
       - name: Run screener
         run: python us_screener.py
@@ -36,10 +53,23 @@ jobs:
           US_SHEET_ID: ${{ secrets.US_SHEET_ID }}
         run: python sheets_sync.py
 
-      - name: Commit results (供 Cloudflare Pages 讀取 us-data.json)
+      - name: Generate US Market Radar dashboard
+        run: python us_market_radar.py
+
+      - name: Commit data and history
         run: |
           git config user.name "us-screener-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add scan_result.csv us-data.json
+          git add scan_result.csv us-data.json site/
           git diff --cached --quiet || git commit -m "US scan $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
           git push
+
+      - name: Publish dashboard to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./site
+          force_orphan: true
+          commit_message: "Publish US Market Radar"
