@@ -340,6 +340,7 @@ def analyze_one(ticker: str, name: str, sector: str, theme: str,
     return {
         "ticker": ticker, "name": name, "sector": sector, "theme": theme,
         "price": round(price, 2),
+        "price_date": str(df.index[-1].date()),
         "sha_signal": sha_sig,
         "n_stage": nres["n_stage"],
         "A": nres["A"], "B": nres["B"], "C": nres["C"],
@@ -414,7 +415,12 @@ def run_scan(demo: bool = False) -> pd.DataFrame:
     # v1.1(#1)：NaN→None，否則json.dump會寫出非法的NaN字面值，
     # 瀏覽器/Node的JSON.parse與GAS等下游消費端會直接解析失敗
     out_json = out.astype(object).where(pd.notna(out), None)
+    market_dates = sorted(
+        str(value) for value in out.get("price_date", [])
+        if value is not None and pd.notna(value)
+    )
     payload = {"updated": ts, "source": "US StockRadar v1.1",
+               "market_date": market_dates[-1] if market_dates else None,
                "count": len(out), "results": out_json.to_dict(orient="records")}
     with open(os.path.join(base, CFG["OUTPUT_JSON"]), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1, default=str)
