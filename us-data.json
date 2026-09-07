@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-05 07:29",
+ "updated": "2026-09-08 07:50",
  "source": "US StockRadar v1.1",
  "market_date": "2026-09-04",
  "count": 28,
@@ -99,7 +99,7 @@
    "n_stage": "右腳即將形成★",
    "A": 189.39,
    "B": 226.41,
-   "C": 199.05,
+   "C": 199.04,
    "n_target": 263.43,
    "dist_to_C_pct": 0.9,
    "bb_width_pctile": 74.0,
@@ -141,7 +141,7 @@
    "techDetail": "SHA=BUY、BB收斂、站上MA20",
    "fundDetail": "營收YoY 18%、EPS成長 32%、毛利率 68%",
    "chipsDetail": "空單佔比 0.9%(低)、機構持股 76%",
-   "volDetail": "日均額 11389M",
+   "volDetail": "日均額 11405M",
    "status": "OK"
   },
   {
@@ -224,8 +224,8 @@
    "tier": "母池追蹤",
    "techDetail": "SHA=BUY、站上MA20",
    "fundDetail": "營收YoY 26%、毛利率 75%",
-   "chipsDetail": "空單佔比 2.4%(低)、機構持股 76%",
-   "volDetail": "日均額 2193M",
+   "chipsDetail": "空單佔比 2.4%(低)、機構持股 77%",
+   "volDetail": "日均額 2194M",
    "status": "OK"
   },
   {
@@ -253,7 +253,7 @@
    "techDetail": "",
    "fundDetail": "營收YoY 25%、EPS成長 43%、毛利率 49%",
    "chipsDetail": "空單佔比 1.5%(低)、機構持股 86%",
-   "volDetail": "日均額 3676M",
+   "volDetail": "日均額 3677M",
    "status": "OK"
   },
   {
@@ -281,7 +281,7 @@
    "techDetail": "",
    "fundDetail": "營收YoY 48%、EPS成長 26%、毛利率 83%",
    "chipsDetail": "空單佔比 0.7%(低)、機構持股 85%",
-   "volDetail": "日均額 3009M",
+   "volDetail": "日均額 3013M",
    "status": "OK"
   },
   {
@@ -309,7 +309,7 @@
    "techDetail": "",
    "fundDetail": "營收YoY 34%、毛利率 70%",
    "chipsDetail": "空單佔比 2.8%(低)、機構持股 85%",
-   "volDetail": "日均額 2230M",
+   "volDetail": "日均額 2231M",
    "status": "OK"
   },
   {
@@ -336,8 +336,8 @@
    "tier": "母池追蹤",
    "techDetail": "N結構完整整理中",
    "fundDetail": "毛利率 70%",
-   "chipsDetail": "空單佔比 3.7%、機構持股 86%",
-   "volDetail": "日均額 385M、回檔量縮(沉澱)",
+   "chipsDetail": "空單佔比 3.7%、機構持股 85%",
+   "volDetail": "日均額 386M、回檔量縮(沉澱)",
    "status": "OK"
   },
   {
@@ -392,8 +392,8 @@
    "tier": "排除-波段新高(中後段)",
    "techDetail": "SHA=BUY、⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 106%、EPS成長 128%、毛利率 75%",
-   "chipsDetail": "空單佔比 1.2%(低)、機構持股 71%",
-   "volDetail": "日均額 28371M",
+   "chipsDetail": "空單佔比 1.2%(低)、機構持股 72%",
+   "volDetail": "日均額 28403M",
    "status": "OK"
   },
   {
@@ -421,7 +421,7 @@
    "techDetail": "SHA=BUY、⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 346%、EPS成長 1368%、毛利率 73%",
    "chipsDetail": "空單佔比 2.7%(低)、機構持股 80%",
-   "volDetail": "日均額 26131M",
+   "volDetail": "日均額 26141M",
    "status": "OK"
   },
   {
@@ -449,7 +449,7 @@
    "techDetail": "⚠N結構失效",
    "fundDetail": "營收YoY 18%、EPS成長 52%、毛利率 65%",
    "chipsDetail": "空單佔比 1.5%(低)、機構持股 83%",
-   "volDetail": "日均額 2216M、回檔量縮(沉澱)",
+   "volDetail": "日均額 2218M、回檔量縮(沉澱)",
    "status": "OK"
   },
   {
@@ -477,7 +477,7 @@
    "techDetail": "SHA=BUY、⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 21%、EPS成長 22%、毛利率 66%",
    "chipsDetail": "空單佔比 2.8%(低)",
-   "volDetail": "日均額 3382M",
+   "volDetail": "日均額 3384M",
    "status": "OK"
   },
   {
@@ -509,6 +509,34 @@
    "status": "OK"
   },
   {
+   "ticker": "APH",
+   "name": "Amphenol",
+   "sector": "AI/科技",
+   "theme": "連接器",
+   "price": 82.78,
+   "price_date": "2026-09-04",
+   "sha_signal": "SELL",
+   "n_stage": "破A點-結構失效(空頭)",
+   "A": 78.11,
+   "B": 89.26,
+   "C": 69.83,
+   "n_target": null,
+   "dist_to_C_pct": null,
+   "bb_width_pctile": 2.0,
+   "new_high_60d": false,
+   "techScore": 2,
+   "fundScore": 30,
+   "chipsScore": 15,
+   "volScore": 8,
+   "compositeScore": 55,
+   "tier": "排除-空頭結構",
+   "techDetail": "⚠N結構失效、BB收斂、站上MA20",
+   "fundDetail": "營收YoY 55%、EPS成長 59%、毛利率 39%",
+   "chipsDetail": "空單佔比 1.4%(低)、機構持股 97%",
+   "volDetail": "日均額 903M",
+   "status": "OK"
+  },
+  {
    "ticker": "GLW",
    "name": "Corning",
    "sector": "AI/科技",
@@ -533,7 +561,7 @@
    "techDetail": "⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 17%、EPS成長 18%、毛利率 36%",
    "chipsDetail": "空單佔比 2.2%(低)、機構持股 75%",
-   "volDetail": "日均額 1336M",
+   "volDetail": "日均額 1341M",
    "status": "OK"
   },
   {
@@ -541,7 +569,7 @@
    "name": "Broadcom",
    "sector": "半導體",
    "theme": "ASIC",
-   "price": 357.89,
+   "price": 357.9,
    "price_date": "2026-09-04",
    "sha_signal": "SELL",
    "n_stage": "破A點-結構失效(空頭)",
@@ -561,7 +589,7 @@
    "techDetail": "⚠N結構失效",
    "fundDetail": "營收YoY 86%、EPS成長 215%、毛利率 76%",
    "chipsDetail": "空單佔比 1.2%(低)、機構持股 80%",
-   "volDetail": "日均額 8754M",
+   "volDetail": "日均額 8759M",
    "status": "OK"
   },
   {
@@ -645,7 +673,7 @@
    "techDetail": "SHA=BUY、⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 166%、毛利率 32%",
    "chipsDetail": "空單佔比 7.1%、機構持股 86%",
-   "volDetail": "日均額 2618M",
+   "volDetail": "日均額 2634M",
    "status": "OK"
   },
   {
@@ -672,7 +700,7 @@
    "tier": "排除-空頭結構",
    "techDetail": "⚠N結構失效、站上MA20",
    "fundDetail": "營收YoY 24%、EPS成長 53%、毛利率 38%",
-   "chipsDetail": "空單佔比 3.4%、機構持股 84%",
+   "chipsDetail": "空單佔比 3.4%、機構持股 85%",
    "volDetail": "日均額 1074M",
    "status": "OK"
   },
@@ -701,35 +729,7 @@
    "techDetail": "SHA=BUY、⚠N結構失效、BB收斂、站上MA20",
    "fundDetail": "營收YoY 23%",
    "chipsDetail": "空單佔比 3.0%(低)、機構持股 83%",
-   "volDetail": "日均額 682M",
-   "status": "OK"
-  },
-  {
-   "ticker": "APH",
-   "name": "Amphenol",
-   "sector": "AI/科技",
-   "theme": "連接器",
-   "price": 82.78,
-   "price_date": "2026-09-04",
-   "sha_signal": "SELL",
-   "n_stage": "破A點-結構失效(空頭)",
-   "A": 156.21,
-   "B": 178.52,
-   "C": 81.85,
-   "n_target": null,
-   "dist_to_C_pct": null,
-   "bb_width_pctile": 0.0,
-   "new_high_60d": false,
-   "techScore": 0,
-   "fundScore": 30,
-   "chipsScore": 15,
-   "volScore": 0,
-   "compositeScore": 45,
-   "tier": "排除-空頭結構",
-   "techDetail": "⚠N結構失效、BB收斂",
-   "fundDetail": "營收YoY 55%、EPS成長 59%、毛利率 39%",
-   "chipsDetail": "空單佔比 1.4%(低)、機構持股 97%",
-   "volDetail": "資料不足",
+   "volDetail": "日均額 683M",
    "status": "OK"
   },
   {
