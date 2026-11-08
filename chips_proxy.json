@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-01 16:54",
+ "updated": "2026-11-08 16:44",
  "source": "us_chips_proxy v1.1(內部人改連結制)",
  "results": [
   {
@@ -168,7 +168,7 @@
    "ticker": "CRWD",
    "name": "CrowdStrike",
    "instTrendScore": 8,
-   "instTrendDetail": "主動機構 4/5 家增持(佈局趨勢)",
+   "instTrendDetail": "主動機構 3/4 家增持(佈局趨勢)",
    "chipsProxyScore": 8,
    "openinsider_link": "http://openinsider.com/screener?s=CRWD&o=&pl=&ph=&ll=&lh=&fd=90&fdr=&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=100&page=1",
    "sec_edgar_link": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CRWD&type=4&dateb=&owner=include&count=40"
